@@ -1,0 +1,17 @@
+{
+	"name": "SynapseSQLPoolSchema",
+	"properties": {
+		"content": {
+			"query": "CREATE DATABASE udacity\n\nGO \n\nDROP EXTERNAL FILE FORMAT [SynapseDelimitedTextFormat] \n\nGO\n\nIF NOT EXISTS (SELECT * FROM sys.external_file_formats WHERE name = 'SynapseDelimitedTextFormat') \nCREATE EXTERNAL FILE FORMAT [SynapseDelimitedTextFormat] \nWITH ( FORMAT_TYPE = DELIMITEDTEXT ,\nFORMAT_OPTIONS (\nFIELD_TERMINATOR = ',',\nUSE_TYPE_DEFAULT = FALSE,\nFIRST_ROW  = 1\n))\n\nGO\n\n-- Create a db master key if one does not already exist, using your own password.\nCREATE MASTER KEY ENCRYPTION BY PASSWORD='XXXXXXXXXXXXXXX';\n\nGO\n\n-- Create a database scoped credential.\nCREATE DATABASE SCOPED CREDENTIAL MyCredentials\nWITH IDENTITY = 'SHARED ACCESS SIGNATURE',\nSECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';\n\nGO \n\n\n\nCREATE EXTERNAL DATA SOURCE [ds_synapsedatalakeudacity] WITH (\n    LOCATION = 'abfss://adlsnycpayroll-yourfirstname-lastintial@mydatalakeudacity123.dfs.core.windows.net/dirstaging/',\n    CREDENTIAL = [MyCredentials]\n);\n\n\nGO\n\nCREATE EXTERNAL TABLE [dbo].[NYC_Payroll_Summary](\n[AgencyName] [varchar](50) NULL,\n[FiscalYear] INT NULL,\n[TotalPaid] float NULL\n)\nWITH (\nLOCATION = '/',\nDATA_SOURCE = [ds_synapsedatalakeudacity],\nFILE_FORMAT = [SynapseDelimitedTextFormat]\n)\n\nGO\n\nCREATE EXTERNAL TABLE [dbo].[NYC_Payroll_Summary](\n[FiscalYear] [varchar](50) NULL,\n[AgencyName] [varchar](50) NULL,\n[TotalPaid] [varchar](50) NULL\n)\nWITH (\nLOCATION = '/',\nDATA_SOURCE = [ds_synapsedatalakeudacity],\nFILE_FORMAT = [SynapseDelimitedTextFormat]\n)\n\n\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "udacity",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
